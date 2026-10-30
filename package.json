@@ -1,0 +1,21 @@
+{
+  "name": "image-animation-2",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "vite --port 5173",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "vite": "^8.3.5"
+  },
+  "dependencies": {
+    "dialkit": "^2.1.0",
+    "motion": "^14.8.0"
+  }
+}

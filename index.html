@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Stack</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #111111;
+    --pill-border: #e3e3e3;
+    --pill-hover: #f4f4f4;
+    --pill-active-bg: #111111;
+    --pill-active-text: #ffffff;
+    --card-bg: #ededed;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  /* 1440×1024 artboard, scaled to fit the window */
+  .viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  /* Pinned to the window centre so it stays centred even when larger than the window */
+  .stage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1440px;
+    height: 1024px;
+    margin: -512px 0 0 -720px;
+    transform-origin: center center;
+  }
+
+  /* Outer element is driven by Motion; inner element handles hover */
+  .card {
+    position: absolute;
+    width: 264px;
+    height: 354px;
+    cursor: pointer;
+    will-change: transform;
+  }
+
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--card-bg);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 12px 32px -12px rgba(0,0,0,0.18);
+    transition:
+      transform 400ms var(--ease-out),
+      box-shadow 400ms var(--ease-out);
+  }
+
+  .card:hover .card-inner {
+    transform: translateY(calc(var(--hop-y, 8px) * -1));
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 24px 48px -16px rgba(0,0,0,0.3);
+  }
+
+  .card-inner { position: relative; }
+
+  /* Blurs the current photo underneath. Backdrop blur clamps at the card edge,
+     so dark photos don't get a pale halo. */
+  .card-blur {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    -webkit-backdrop-filter: blur(var(--blur, 0px));
+    backdrop-filter: blur(var(--blur, 0px));
+  }
+
+  /* The upcoming photo, faded in sharp over the blurring current one */
+  .card .card-ghost {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .pills {
+    position: absolute;
+    left: 0;
+    top: 740px;
+    width: 1440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(8em / 13);
+    font-size: var(--pill-font, 13px);
+  }
+
+  .pill-row {
+    display: flex;
+    gap: calc(8em / 13);
+  }
+
+  /* Sized in em so the button grows with its text: 35px tall, 16px padding at 13px */
+  .pill {
+    height: calc(35em / 13);
+    padding: 0 calc(16em / 13);
+    border: 1px solid var(--pill-border);
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 200ms ease, color 200ms ease, border-color 200ms ease, transform 200ms var(--ease-out);
+  }
+
+  .pill:hover { background: var(--pill-hover); }
+
+  .pill-more {
+    color: #6b6b6b;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pill:active { transform: scale(0.95); }
+
+  .pill[aria-pressed="true"] {
+    background: var(--pill-active-bg);
+    border-color: var(--pill-active-bg);
+    color: var(--pill-active-text);
+  }
+
+  .pill:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-inner, .pill { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="viewport">
+  <div class="stage" id="stage">
+    <div class="pills" id="pills" role="group" aria-label="Photography styles"></div>
+  </div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
